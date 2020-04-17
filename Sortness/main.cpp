@@ -7,7 +7,7 @@
 #include <vector>
 #include <numeric>
 #include <stdlib.h>
-#include <windows.h>
+//#include <windows.h>
 
 using namespace std;
 using namespace std::chrono;
