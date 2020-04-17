@@ -15,6 +15,10 @@ using namespace std;
 using namespace std::chrono;
 
 //still in working progress
+
+// size : the length of our benchmark
+// k: number of elements to be removed to keep array sorted
+// l: the maximum distance between pair of inversions
 vector<int> k_l_close_sorted(int size,int k, int l){
     //cout<<"success"<<endl;
     std::vector<int> v(size);
@@ -63,6 +67,7 @@ int main()
     std::vector<int> vcopy = v;
     std::vector<int> vcopy2 = v;
     int n = v.size();
+    
     auto start = high_resolution_clock::now();
     int* a = &v[0];
     cout<<"BubbleSort"<<endl;
@@ -84,10 +89,6 @@ int main()
     auto stop2 = high_resolution_clock::now();
     auto duration2 = duration_cast<microseconds>(stop2 - start2);
     cout<<duration2.count()<<" microseconds"<<endl;
-
-
-    //LARGE_INTEGER beginTime;
-    //QueryPerformanceCounter( &beginTime );
 
     auto start3 = high_resolution_clock::now();
     int*a3 = &vcopy2[0];
