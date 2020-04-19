@@ -11,6 +11,7 @@
 #include <numeric>
 #include <stdlib.h>
 #include<string>
+#include <bits/stdc++.h>
 
 using namespace std;
 using namespace std::chrono;
@@ -24,16 +25,18 @@ vector<int> k_l_close_sorted(int size,int k, int l){
     //cout<<"success"<<endl;
     std::vector<int> v(size);
     std::iota(v.begin(), v.end(), 0);
-    int distance = size/k+1;
+    int distance = size/k;
     int count=0;
+    int kcount=0;
     srand(time(NULL));
 
     //generate elements for k
     std::vector<int> issorted(size, 1);
     for(int i=0;i<size;i++){
-        if(count % distance==0){
+        if(count % distance==0 && kcount<k){
             v[i] = (v[i]+1)*1000;
             issorted[i]=0;
+            kcount+=1;
         }
         count+=1;
     }
@@ -58,10 +61,23 @@ vector<int> k_l_close_sorted(int size,int k, int l){
     return v;
 }
 
+template <typename I>
+I random_element(I begin, I end)
+{
+    const unsigned long n = std::distance(begin, end);
+    const unsigned long divisor = (RAND_MAX + 1) / n;
+
+    unsigned long k;
+    do { k = std::rand() / divisor; } while (k >= n);
+
+    std::advance(begin, k);
+    return begin;
+}
+
 
 int main()
 {
-    std::vector<int> v= k_l_close_sorted(15,3,3);
+    std::vector<int> v= k_l_close_sorted(15,7,3);
     // make copies of vector because sorting algorithms are in place
     std::vector<int> vcopy = v;
     std::vector<int> vcopy2 = v;
@@ -126,37 +142,45 @@ int main()
     auto duration5 = duration_cast<microseconds>(stop5 - start5);
     cout<<duration5.count()<<" Microseconds"<<endl;
 
+    cout<<"------------------"<<endl;
+
+    //int midindex = static_cast<int>(v.size())/2;
+    int rand = *random_element(vcopy5.begin(), vcopy5.end());       //random number in input
+    int min = *min_element(vcopy5.begin(), vcopy5.end());
+    int max = *max_element(vcopy5.begin(), vcopy5.end());
+    cout<<"max is: "<<max<<endl;
+
     //BTree
-    start5 = high_resolution_clock::now();
+    auto start6 = high_resolution_clock::now();
     cout<<"\nThe following is BTree"<<endl;
     BTree t(3); // A B-Tree with minium degree 3
     for(int i: vcopy5){
         // cout<<"i= "<<i<<endl;
         t.insert(i);
     }
-    if(t.search(vcopy5[0])){
+    if(t.search(max)){
         cout << "Found\n";
     }
     else{
         cout << "Not Found\n";
     }
-    stop5 = high_resolution_clock::now();
-    duration5 = duration_cast<microseconds>(stop5 - start5);
-    cout<<duration5.count()<<" Microseconds"<<endl;
+    auto stop6 = high_resolution_clock::now();
+    auto duration6 = duration_cast<microseconds>(stop6 - start6);
+    cout<<duration6.count()<<" Microseconds"<<endl;
 
     //Our Trie implementation only take in values from 0 and forward
-    start5 = high_resolution_clock::now();
+    auto start7 = high_resolution_clock::now();
     cout<<"\nThe following is Trie"<<endl;
     struct TrieNode *root = getNode();
     for(int i:vcopy5){
          string num = to_string(i);
          Trie_insert(root,num);
     }
-
-    Trie_search(root, "1000")? cout << "Found\n" : cout << "Not Found\n"; 
-    stop5 = high_resolution_clock::now();
-    duration5 = duration_cast<microseconds>(stop5 - start5);
-    cout<<duration5.count()<<" Microseconds"<<endl;
+    
+    Trie_search(root, to_string(max))? cout << "Found\n" : cout << "Not Found\n"; 
+    auto stop7 = high_resolution_clock::now();
+    auto duration7 = duration_cast<microseconds>(stop7 - start7);
+    cout<<duration7.count()<<" Microseconds"<<endl;
 
     return 0;
     }
