@@ -5,11 +5,12 @@
 #include "BTree.h"
 #include "MergeSort.h"
 #include "HeapSort.h"
+#include "Trie.h"
 #include <chrono>
 #include <vector>
 #include <numeric>
 #include <stdlib.h>
-//#include <windows.h>
+#include<string>
 
 using namespace std;
 using namespace std::chrono;
@@ -26,7 +27,7 @@ vector<int> k_l_close_sorted(int size,int k, int l){
     int distance = size/k+1;
     int count=0;
     srand(time(NULL));
-    //int swapcount=rand()%l+1;
+
     //generate elements for k
     std::vector<int> issorted(size, 1);
     for(int i=0;i<size;i++){
@@ -34,7 +35,6 @@ vector<int> k_l_close_sorted(int size,int k, int l){
             v[i] = (v[i]+1)*1000;
             issorted[i]=0;
         }
-        //cout<<v[i]<<",";
         count+=1;
     }
 
@@ -45,8 +45,6 @@ vector<int> k_l_close_sorted(int size,int k, int l){
     for(int i=0;i<size;i++){
         if(count % distance!=0){
             int swappos = rand()%(l+1);
-            //cout<<"index"<<i<<endl;
-            //cout<<"swappos"<<swappos<<endl;
             if(issorted[i+swappos]==1 && issorted[i]==1){
                 swap(&v[i],&v[i+swappos]);
                 issorted[i+swappos]=0;
@@ -54,20 +52,24 @@ vector<int> k_l_close_sorted(int size,int k, int l){
 
             }
         }
-        //cout<<v[i]<<endl;
         count+=1;
     }
 
     return v;
 }
 
+
 int main()
 {
     std::vector<int> v= k_l_close_sorted(15,3,3);
+    // make copies of vector because sorting algorithms are in place
     std::vector<int> vcopy = v;
     std::vector<int> vcopy2 = v;
+    std::vector<int> vcopy3 = v;
+    std::vector<int> vcopy4 = v;
+    std::vector<int> vcopy5 = v;
     int n = v.size();
-    
+
     auto start = high_resolution_clock::now();
     int* a = &v[0];
     cout<<"BubbleSort"<<endl;
@@ -102,7 +104,7 @@ int main()
     cout<<duration3.count()<<" Microseconds"<<endl;
 
     auto start4 = high_resolution_clock::now();
-    int*a4 = &vcopy2[0];
+    int*a4 = &vcopy3[0];
     cout<<"Merge Sort"<<endl;
     printArray(a4,n);
     mergeSort(a4,0,n-1);
@@ -113,7 +115,7 @@ int main()
     cout<<duration4.count()<<" Microseconds"<<endl;
 
     auto start5 = high_resolution_clock::now();
-    int*a5 = &vcopy2[0];
+    int*a5 = &vcopy4[0];
     cout<<"Heap Sort"<<endl;
     printArray(a5,n);
     int nn = sizeof(a5) / sizeof(a5[0]);
@@ -124,11 +126,38 @@ int main()
     auto duration5 = duration_cast<microseconds>(stop5 - start5);
     cout<<duration5.count()<<" Microseconds"<<endl;
 
-
-    cout<<"The following is BTree"<<endl;
+    //BTree
+    start5 = high_resolution_clock::now();
+    cout<<"\nThe following is BTree"<<endl;
     BTree t(3); // A B-Tree with minium degree 3
-    t.insert(1);
-    t.traverse();
+    for(int i: vcopy5){
+        // cout<<"i= "<<i<<endl;
+        t.insert(i);
+    }
+    if(t.search(vcopy5[0])){
+        cout << "Found\n";
+    }
+    else{
+        cout << "Not Found\n";
+    }
+    stop5 = high_resolution_clock::now();
+    duration5 = duration_cast<microseconds>(stop5 - start5);
+    cout<<duration5.count()<<" Microseconds"<<endl;
+
+    //Our Trie implementation only take in values from 0 and forward
+    start5 = high_resolution_clock::now();
+    cout<<"\nThe following is Trie"<<endl;
+    struct TrieNode *root = getNode();
+    for(int i:vcopy5){
+         string num = to_string(i);
+         Trie_insert(root,num);
+    }
+
+    Trie_search(root, "1000")? cout << "Found\n" : cout << "Not Found\n"; 
+    stop5 = high_resolution_clock::now();
+    duration5 = duration_cast<microseconds>(stop5 - start5);
+    cout<<duration5.count()<<" Microseconds"<<endl;
 
     return 0;
-}
+    }
+
