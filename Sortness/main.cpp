@@ -59,9 +59,12 @@ vector<int> k_l_close_sorted(int size,int k, int l){
 
 int main()
 {
-    std::vector<int> v= k_l_close_sorted(15,3,3);
+    std::vector<int> v= k_l_close_sorted(15,8,8);
+    cout<<"Sorted arrays: size = 15, k = 8, l =8 \n";
     std::vector<int> vcopy = v;
     std::vector<int> vcopy2 = v;
+    std::vector<int> vcopy3 = v;
+    std::vector<int> vcopy4 = v;
     int n = v.size();
     auto start = high_resolution_clock::now();
     int* a = &v[0];
@@ -101,24 +104,24 @@ int main()
     cout<<duration3.count()<<" Microseconds"<<endl;
 
     auto start4 = high_resolution_clock::now();
-    int*a4 = &vcopy2[0];
+    int*a4 = &vcopy3[0];
     cout<<"Merge Sort"<<endl;
     printArray(a4,n);
     mergeSort(a4,0,n-1);
-    //cout<<"Sorted arrays: \n";
-    //printArray(a3,n);
+    cout<<"Sorted arrays: \n";
+    printArray(a4,n);
     auto stop4 = high_resolution_clock::now();
     auto duration4 = duration_cast<microseconds>(stop4 - start4);
     cout<<duration4.count()<<" Microseconds"<<endl;
 
     auto start5 = high_resolution_clock::now();
-    int*a5 = &vcopy2[0];
+    int*a5 = &vcopy4[0];
     cout<<"Heap Sort"<<endl;
     printArray(a5,n);
     int nn = sizeof(a5) / sizeof(a5[0]);
     heapSort(a5,nn);
-    //cout<<"Sorted arrays: \n";
-    //printArray(a3,n);
+    cout<<"Sorted arrays: \n";
+    printArray(a5,n);
     auto stop5 = high_resolution_clock::now();
     auto duration5 = duration_cast<microseconds>(stop5 - start5);
     cout<<duration5.count()<<" Microseconds"<<endl;
