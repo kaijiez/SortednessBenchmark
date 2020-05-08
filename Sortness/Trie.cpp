@@ -2,7 +2,7 @@
 #include "Trie.h"
 using namespace std;
 
-const int ALPHABET_SIZE = 1000;
+const int ALPHABET_SIZE = 1000;     //should be change to 10, but same result
 
 // trie node 
 struct TrieNode
