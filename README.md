@@ -8,7 +8,7 @@ To setup the project:
 -	git clone https://github.com/rafaelkallis/adaptive-radix-tree.git
 
 
-To run the files:	
+(Windows) To run the files:	
 -	g++ *cpp -o main.exe
 -	main.exe
 
