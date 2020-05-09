@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include  <random>
 #include  <iterator>
+#include <ctime>
 
 #include <chrono>
 using namespace std;
@@ -26,22 +27,16 @@ using namespace std::chrono;
 vector<int> sorted_array(int size){
     std::vector<int> v(size);
     std::iota(v.begin(), v.end(), 0);
-    // for(int i:v){
-    //     cout<<i<<endl;
-    // }
+
     return v;
 }
 
 //completely unsorted array
 vector<int> unsorted_array(int size){
     std::vector<int> v(size);
-    // std::iota(v.begin(), v.end(), 0);
-    // std::mt19937 rng(std::random_device{}());
-    // std::shuffle(v.begin(), v.end(), rng);
+
     std::generate(v.begin(), v.end(), std::rand);
-    // for(int i:v){
-    //      cout<<i<<endl;
-    // }
+
     return v;
 }
 
@@ -89,7 +84,7 @@ vector<int> k_l_close_sorted(int size,int k, int l){
     return v;
 }
 
-// check if input contain all values
+// check if input vector contain the values vector
 bool rangeSearch(vector<int>input, vector<int>values){
     for(int x_v:values){
 
@@ -121,12 +116,6 @@ vector<std::tuple<int, int>> zoneMaps(vector<int> input){
         
         count+=1;
     }
-    // cout<<"count"<<count<<endl;
-    // for(int i=0;i<v.size();i++){
-        // cout<<"min: "<<std::get<0>(v[i])<<endl;
-        // cout<<"max: "<<std::get<1>(v[i])<<endl;
-        // cout<<"------------"<<endl;
-    // }
 
     return v;
 }
@@ -152,33 +141,39 @@ void zoneMapRangeSearchTesting(vector<int> targets, vector<int>input){
         bool included=true;
 
         for(int rand: targets){
-            cout<<"rand "<<rand<<endl;
-            
+            // cout<<"rand "<<rand<<endl;
             if(rand<std::get<0>(zonemap[i]) || rand>std::get<1>(zonemap[i])){
                 included=false;
-                cout<<"not included"<<endl;
-                cout<<"min zonemap"<<std::get<0>(zonemap[i])<<endl;
-                cout<<"max zonemap"<<std::get<1>(zonemap[i])<<endl;
+                // cout<<"not included"<<endl;
+                // cout<<"min zonemap"<<std::get<0>(zonemap[i])<<endl;
+                // cout<<"max zonemap"<<std::get<1>(zonemap[i])<<endl;
                 break;
             }
         
         }
         if(included)
             {
-                cout<<"min zonemap"<<std::get<0>(zonemap[i])<<endl;
-                cout<<"max zonemap"<<std::get<1>(zonemap[i])<<endl;
+                // cout<<"min zonemap"<<std::get<0>(zonemap[i])<<endl;
+                // cout<<"max zonemap"<<std::get<1>(zonemap[i])<<endl;
                 skipindex=i*32000;
-                skipv.push_back(skipindex);
-                cout<<"got one: "<<skipindex<<endl;
+                if(std::find(skipv.begin(), skipv.end(), skipindex) != skipv.end()) {
+                    
+                }
+                else{
+                    skipv.push_back(skipindex);
+                    // cout<<"inlude one: "<<skipindex<<endl;
+                }
+                
+                
                 
             }
     }
 
     //search for values
-    cout<<"skipindex "<<skipindex<<endl;
+
     for(int skipdistance:skipv){
        if(rangeSearch(std::vector<int>(input.begin()+skipdistance,input.begin()+skipdistance+32000),targets)==true){
-        cout<<"zonemap true"<<endl;
+        cout<<"zonemap found"<<endl;
         break;
         } 
     }
@@ -189,7 +184,7 @@ void zoneMapRangeSearchTesting(vector<int> targets, vector<int>input){
 
     std::chrono::steady_clock::time_point begin4 = std::chrono::steady_clock::now();
     if(rangeSearch(input,targets)==true){
-        cout<<"range search true"<<endl;
+        cout<<"range search found"<<endl;
     }
     std::chrono::steady_clock::time_point end4 = std::chrono::steady_clock::now();
     std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end4 - begin4).count() << " Microseconds" << std::endl;
@@ -210,11 +205,12 @@ void zoneMapLinearSearchTesting(int rand,vector<int> input){
         }
     }
     // std::chrono::steady_clock::time_point begin3 = std::chrono::steady_clock::now();
+
     //search for values
     cout<<"skipindex "<<skipindex<<endl;
     for(int skipdistance:skipv){
        if(linearSearch(std::vector<int>(input.begin()+skipdistance,input.begin()+skipdistance+1000),rand)==true){
-        cout<<"zonemap true"<<endl;
+        cout<<"zonemap found"<<endl;
         break;
         } 
     }
@@ -225,7 +221,7 @@ void zoneMapLinearSearchTesting(int rand,vector<int> input){
 
     std::chrono::steady_clock::time_point begin4 = std::chrono::steady_clock::now();
     if(linearSearch(input,rand)==true){
-        cout<<"linear true"<<endl;
+        cout<<"linear found"<<endl;
     }
     std::chrono::steady_clock::time_point end4 = std::chrono::steady_clock::now();
     std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end4 - begin4).count() << " Microseconds" << std::endl;
@@ -237,28 +233,17 @@ void zoneMapLinearSearchTesting(int rand,vector<int> input){
 void meansureARTperformance(vector<int> benchmark,int key){
     cout<<"the following is ART"<<endl;
     cout<<key<<endl;
-     art1::art<int> m;
+    art1::art<int> m;
 
-      // int v = 3;
-      // // set k to v
-      // m.set("k", &v);
+    for(int i:benchmark){
+       m.set(std::to_string(i).c_str(),&i);
+        
+    }
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    int * v_ptr = m.get(std::to_string(key).c_str());
 
-      // // get value of k
-      // int * v_ptr = m.get("k");
-
-      // // delete k
-      // m.del("k");
-
-     for(int i:benchmark){
-        m.set(std::to_string(i).c_str(),&i);
-        // cout<<"address "<<std::to_string(i).c_str()<<endl;
-     }
-     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-     int * v_ptr = m.get(std::to_string(key).c_str());
-     // std::cout<<"found address"<< v_ptr<<std::endl;
-
-     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-     std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() << " Nanoseconds" << std::endl;
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() << " Nanoseconds" << std::endl;
 
 }
 
@@ -267,6 +252,7 @@ void BTreePointRead(vector<int> input, int value){
     //BTree
     cout<<"\nThe following is BTree"<<endl;
     BTree t(3); // A B-Tree with minium degree 3
+
     // // std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     for(int i: input){
         
@@ -319,11 +305,10 @@ int main(int argc, char** argv)
         std::cout << i<<" "<<argv[i] << std::endl;
     }
     
-    int size=100000;
-    std::vector<int> v=k_l_close_sorted(atoi(argv[1]),atoi(argv[2]),atoi(argv[3]));
     
-    // std::vector<int> v= sorted_array(size);
-    std::vector<int> v= unsorted_array(size);
+    std::vector<int> v=k_l_close_sorted(atoi(argv[1]),atoi(argv[2]),atoi(argv[3]));
+    // std::vector<int> v= sorted_array(atoi(argv[1]));
+    // std::vector<int> v= unsorted_array(atoi(argv[1]));
 
     // make copies of vector because sorting algorithms are in place
     std::vector<int> vcopy = v;
@@ -333,85 +318,86 @@ int main(int argc, char** argv)
     std::vector<int> vcopy5 = v;
     int n = v.size();
     
-    // auto start = high_resolution_clock::now();
-    // int* a = &v[0];
-    // cout<<"BubbleSort"<<endl;
-    // // printArray(a,n);
-    // bubbleSort(a,n);
-    // cout<<"Sorted arrays: \n";
-    // // printArray(a, n);
-    // auto stop = high_resolution_clock::now();
-    // auto duration = duration_cast<microseconds>(stop - start);
-    // cout<<duration.count()<<" microseconds"<<endl;
+    auto start = high_resolution_clock::now();
+    int* a = &v[0];
+    cout<<"BubbleSort"<<endl;
+    // printArray(a,n);
+    bubbleSort(a,n);
+    cout<<"Sorted arrays: \n";
+    // printArray(a, n);
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout<<duration.count()<<" microseconds"<<endl;
 
-    // auto start2 = high_resolution_clock::now();
-    // int*a2 = &vcopy[0];
-    // cout<<"InsertionSort"<<endl;
-    // // printArray(a2,n);
-    // insertionSort(a2,n);
-    // cout<<"Sorted arrays: \n";
-    // // printArray(a2, n);
-    // auto stop2 = high_resolution_clock::now();
-    // auto duration2 = duration_cast<microseconds>(stop2 - start2);
-    // cout<<duration2.count()<<" microseconds"<<endl;
+    auto start2 = high_resolution_clock::now();
+    int*a2 = &vcopy[0];
+    cout<<"InsertionSort"<<endl;
+    // printArray(a2,n);
+    insertionSort(a2,n);
+    cout<<"Sorted arrays: \n";
+    // printArray(a2, n);
+    auto stop2 = high_resolution_clock::now();
+    auto duration2 = duration_cast<microseconds>(stop2 - start2);
+    cout<<duration2.count()<<" microseconds"<<endl;
 
-    // auto start3 = high_resolution_clock::now();
-    // int*a3 = &vcopy2[0];
-    // cout<<"QuickSort"<<endl;
-    // // printArray(a3,n);
-    // quickSort(a3,0,n-1);
-    // cout<<"Sorted arrays: \n";
-    // // printArray(a3,n);
-    // auto stop3 = high_resolution_clock::now();
-    // auto duration3 = duration_cast<microseconds>(stop3 - start3);
-    // cout<<duration3.count()<<" Microseconds"<<endl;
+    auto start3 = high_resolution_clock::now();
+    int*a3 = &vcopy2[0];
+    cout<<"QuickSort"<<endl;
+    // printArray(a3,n);
+    quickSort(a3,0,n-1);
+    cout<<"Sorted arrays: \n";
+    // printArray(a3,n);
+    auto stop3 = high_resolution_clock::now();
+    auto duration3 = duration_cast<microseconds>(stop3 - start3);
+    cout<<duration3.count()<<" Microseconds"<<endl;
 
-    // auto start4 = high_resolution_clock::now();
-    // int*a4 = &vcopy3[0];
-    // cout<<"Merge Sort"<<endl;
-    // // printArray(a4,n);
-    // mergeSort(a4,0,n-1);
-    // //cout<<"Sorted arrays: \n";
-    // //printArray(a3,n);
-    // auto stop4 = high_resolution_clock::now();
-    // auto duration4 = duration_cast<microseconds>(stop4 - start4);
-    // cout<<duration4.count()<<" Microseconds"<<endl;
+    auto start4 = high_resolution_clock::now();
+    int*a4 = &vcopy3[0];
+    cout<<"Merge Sort"<<endl;
+    // printArray(a4,n);
+    mergeSort(a4,0,n-1);
+    //cout<<"Sorted arrays: \n";
+    //printArray(a3,n);
+    auto stop4 = high_resolution_clock::now();
+    auto duration4 = duration_cast<microseconds>(stop4 - start4);
+    cout<<duration4.count()<<" Microseconds"<<endl;
 
-    // auto start5 = high_resolution_clock::now();
-    // int*a5 = &vcopy4[0];
-    // cout<<"Heap Sort"<<endl;
-    // // printArray(a5,n);
-    // heapSort(a5,vcopy4.size());
-    // //cout<<"Sorted arrays: \n";
-    // //printArray(a3,n);
-    // auto stop5 = high_resolution_clock::now();
-    // auto duration5 = duration_cast<microseconds>(stop5 - start5);
-    // cout<<duration5.count()<<" Microseconds"<<endl;
+    auto start5 = high_resolution_clock::now();
+    int*a5 = &vcopy4[0];
+    cout<<"Heap Sort"<<endl;
+    // printArray(a5,n);
+    heapSort(a5,vcopy4.size());
+    //cout<<"Sorted arrays: \n";
+    //printArray(a3,n);
+    auto stop5 = high_resolution_clock::now();
+    auto duration5 = duration_cast<microseconds>(stop5 - start5);
+    cout<<duration5.count()<<" Microseconds"<<endl;
 
     // // cout<<"------------------"<<endl;
-
-    int rand = vcopy5[std::rand() % vcopy5.size()];
+    srand(time(NULL));
+    int rand = v[std::rand() % v.size()];
+    cout<<"rand is:"<<rand<<endl;
     int min = *min_element(vcopy5.begin(), vcopy5.end());
     int max = *max_element(vcopy5.begin(), vcopy5.end());
-    cout<<"num is: "<<rand<<endl;
+    cout<<"num is: "<<min<<endl;
     
-    // zoneMapLinearSearchTesting(rand,vcopy5);
+    zoneMapLinearSearchTesting(rand,vcopy5);
 
 
-    // int s=100;
-    // std::vector<int> targets(s);
-    // for(int i=0;i<s;i++){
-    //     targets[i]=vcopy5[std::rand() % vcopy5.size()];
-    // }
+    int s=atoi(argv[1])*0.3;
+    std::vector<int> targets(s);
+    for(int i=0;i<s;i++){
+        targets[i]=vcopy5[std::rand() % vcopy5.size()];
+    }
 
-    // zoneMapRangeSearchTesting(targets,vcopy5);
+    zoneMapRangeSearchTesting(targets,vcopy5);
 
 
-    BTreePointRead(vcopy5,rand);
+    BTreePointRead(vcopy5,min);
 
     TriePointRead(vcopy5,rand);
     
-    meansureARTperformance(vcopy5,rand);
+    meansureARTperformance(vcopy5,min);
 
     return 0;
     }
